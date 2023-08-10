@@ -3,5 +3,12 @@
 {% block body %}
     <h2>Active Listings</h2>
 
-    TODO
+    {% for items in item %}
+        <div>
+            <img src="{{ items.image }}" alt="items.name" width="400px">
+            <h3>{{ items.name }}</h3>
+            <h3><b>Price:</b> ${{ items.starting_bid }}</h3>
+            <p>Created {{ items.datetime }}</p>
+        </div>
+    {% endfor %}
 {% endblock %}

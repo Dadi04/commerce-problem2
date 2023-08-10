@@ -1,19 +1,26 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-
-from datetime import date
-
+from django.utils import timezone
 
 class User(AbstractUser):
-    first = models.CharField(max_length=64, default='', blank=True)
-    last = models.CharField(max_length=64, default='', blank=True)
     money = models.PositiveIntegerField(default=1000)
+
+    def __str__(self):
+        return f"{self.id}. {self.username} ({self.money}$)"
 
 class Auction(models.Model):
     name = models.CharField(max_length=254)
-    type = models.CharField(max_length=254)
+    description = models.CharField(max_length=254, default='')
+    category = models.CharField(max_length=254)
     image = models.URLField(max_length=254, blank=True)
-    first_price = models.PositiveSmallIntegerField()
+    starting_bid = models.PositiveSmallIntegerField()
+    datetime = models.DateTimeField(default=timezone.now())
+    
+    def formatted_datetime(self):
+        return self.datetime.strftime("%b. %d, %Y, %I:%M %p")
+
+    def __str__(self):
+        return f"{self.id}. {self.category}:{self.name} ({self.description}), {self.starting_bid}$ at {self.formatted_datetime()}"
 
 class Bid(models.Model):
     current_price = models.PositiveSmallIntegerField(default=1)
