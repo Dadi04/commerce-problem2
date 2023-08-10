@@ -5,21 +5,21 @@ from datetime import date
 
 
 class User(AbstractUser):
-    first = models.CharField(max_length=64)
-    last = models.CharField(max_length=64)
-    money = models.PositiveIntegerField()
+    first = models.CharField(max_length=64, default='', blank=True)
+    last = models.CharField(max_length=64, default='', blank=True)
+    money = models.PositiveIntegerField(default=1000)
 
 class Auction(models.Model):
     name = models.CharField(max_length=254)
     type = models.CharField(max_length=254)
-    image = models.ImageField(upload_to='profile_pics/', height_field=600)
+    image = models.URLField(max_length=254, blank=True)
     first_price = models.PositiveSmallIntegerField()
 
-class Bids(models.Model):
-    current_price = models.PositiveSmallIntegerField()
-    times_bid = models.PositiveSmallIntegerField()
-    watchlist = models.BooleanField()
+class Bid(models.Model):
+    current_price = models.PositiveSmallIntegerField(default=1)
+    times_bid = models.PositiveSmallIntegerField(default=0)
+    watchlist = models.BooleanField(default=False)
 
-class Comments(models.Model):
+class Comment(models.Model):
     comments = models.ForeignKey(User, on_delete=models.CASCADE)
     item = models.ForeignKey(Auction, on_delete=models.CASCADE)

@@ -1,0 +1,16 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+    Create Auctions
+{% endblock %}
+
+{% block body %}
+    <form action="{% url 'create' %}" method="post">
+        <input type="text" name="title" placeholder="Title" required><br>
+        <textarea name="description" cols="90" rows="5" placeholder="Description..."></textarea><br>
+        <input type="number" name="starting_bid" placeholder="Starting Bid" min="1" max="" required><br>
+        <input type="url" name="image" placeholder="URL for the Image"><br>
+        <input type="text" name="category" placeholder="Category"><br>
+        <input type="submit">
+    </form>
+{% endblock %}
