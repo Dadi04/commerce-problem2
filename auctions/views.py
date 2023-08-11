@@ -75,7 +75,7 @@ def create(request):
         listed_by = request.user
         item = Auction(name=title, description=description, category=category, image=image, starting_bid=starting_bid, listed_by=listed_by)
         item.save()
-
+        # zbog linije ispod else je kao nepotreban, nisam siguran
         bid = Bid(current_price=item.starting_bid, times_bid=0, item=item)
         bid.save()
         print(bid, listed_by)
@@ -95,7 +95,8 @@ def bid(request, item_id):
     item = Auction.objects.get(pk=item_id)
     current_price = item.starting_bid
     bid_number = 0
-    
+    # proveriti celu else granu, nesto mi ne valja logika, prekasno je da provalim
+    # ostalo za uraditi : popraviti bid, watchlist, zatvoriti bid, pobednicka strana, comments, categories.
     if request.method == "POST":
         bid_price = int(request.POST["bid"])
         if Bid.objects.get(pk=item_id):
