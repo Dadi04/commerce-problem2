@@ -6,16 +6,16 @@
     <input type="button" value="Watchlist"><br>
     <img src="{{ item.image }}" alt="{{ item.name }}" width="600px">
     <p>{{ item.description }}</p>
-    <h2>${{ item.starting_bid }}</h2>
-    <form action="" method="post">
+    <h2>${{ new_bid.current_price }}</h2>
+    <form action="{% url 'bid' item.id %}" method="post">
         {% csrf_token %}
-        <label for="bid">bid(s) so far. Your bid is the current bid.</label><br>
-        <input type="text" id="bid" placeholder="Bid"><br>
+        <label for="bid">{{ bid.times_bid }} bid(s) so far. Your bid is the current bid.</label><br>
+        <input type="number" id="bid" placeholder="Bid" name="bid" min="{{ item.price }}" max=""><br>
         <input type="submit" value="Place Bid">
     </form>
     <h3>Details</h3>
     <ul>
-        <li>Listed by: </li>
+        <li>Listed by: {{ item.listed_by }}</li>
         <li>
             Category: 
             {% if item.category %}
@@ -27,4 +27,6 @@
         </li>
     </ul>
     <h3>Comments</h3>
+    <textarea name="comment" cols="30" rows="10" placeholder="Write a comment.."></textarea><br>
+    <input type="submit" value="Add a comment">
 {% endblock %}

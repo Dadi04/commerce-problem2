@@ -72,9 +72,13 @@ def create(request):
         starting_bid = request.POST["starting_bid"]
         image = request.POST["image"]
         category = request.POST["category"]
-        item = Auction(name=title, description=description, category=category, image=image, starting_bid=starting_bid)
+        listed_by = request.user
+        item = Auction(name=title, description=description, category=category, image=image, starting_bid=starting_bid, listed_by=listed_by)
         item.save()
 
+        bid = Bid(current_price=item.starting_bid, times_bid=0, item=item)
+        bid.save()
+        print(bid, listed_by)
         return render(request, "auctions/index.html", {
             "item": Auction.objects.all()
         })
@@ -87,9 +91,53 @@ def auction_item(request, item_id):
         "item": item
     })
 
+def bid(request, item_id):
+    item = Auction.objects.get(pk=item_id)
+    current_price = item.starting_bid
+    bid_number = 0
+    
+    if request.method == "POST":
+        bid_price = int(request.POST["bid"])
+        if Bid.objects.get(pk=item_id):
+            if_bid_exist = Bid.objects.get(pk=item_id)
+            if bid_price > if_bid_exist.current_price:
+                bid_number = if_bid_exist.times_bid + 1
+                new_bid = Bid(current_price=bid_price, times_bid=bid_number, item=item_id)
+                new_bid.save()
+                return render(request, "auctions/listings.html", {
+                        "item": item,
+                        "bid": new_bid
+                })
+            else:
+                return render(request, "auctions/listings.html", {
+                    "item": item,
+                    "message": "You bid is lower than current!!"
+                })
+        else:
+            if bid_price:
+                if bid_price > current_price:
+                    bid_number = bid_number + 1
+                    new_bid = Bid(current_price=bid_price, times_bid=bid_number, item=item_id)    
+                    new_bid.save()
+                    return render(request, "auctions/listings.html", {
+                        "item": item,
+                        "bid": new_bid
+                    })
+                else: 
+                    return render(request, "auctions/listings.html", {
+                    "item": item,
+                    "message": "You bid is lower than current!!"
+                })
+            else: 
+                new_bid = Bid(current_price=current_price, times_bid=bid_number, item=item_id)
+                new_bid.save()
+                return render(request, "auctions/listings.html", {
+                    "item": item,
+                    "bid": new_bid
+                })
+
 def categories(request):
     pass
 
 def watchlist(request):
     pass
-
