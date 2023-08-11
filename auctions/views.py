@@ -77,13 +77,19 @@ def create(request):
 
         return render(request, "auctions/index.html", {
             "item": Auction.objects.all()
-            # loop over classes
         })
     else:
         return render(request, "auctions/create.html")
     
+def auction_item(request, item_id):
+    item = Auction.objects.get(pk=item_id)
+    return render(request, "auctions/listings.html", {
+        "item": item
+    })
+
 def categories(request):
     pass
 
 def watchlist(request):
     pass
+

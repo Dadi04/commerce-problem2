@@ -2,6 +2,33 @@ body {
     padding: 10px;
 }
 
-input {
+input, textarea {
     margin: 5px;
+}
+
+input[type="url"] {
+    width: 500px;
+}
+
+.listing {
+    border: 1px solid lightgray;
+    margin: 2px 0 10px 0;
+    height: 302px;
+}
+
+.img {
+    text-align: center;
+    display: inline-block;
+    height: 300px;
+    width: 600px;
+}
+
+.content {
+    display: inline-block;
+    height: 300px;
+}
+
+.content .date {
+    margin-top: 5px;
+    color: gray;
 }
