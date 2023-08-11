@@ -101,40 +101,52 @@ def bid(request, item_id):
         if Bid.objects.get(pk=item_id):
             if_bid_exist = Bid.objects.get(pk=item_id)
             if bid_price > if_bid_exist.current_price:
-                bid_number = if_bid_exist.times_bid + 1
-                new_bid = Bid(current_price=bid_price, times_bid=bid_number, item=item_id)
+                new_bid = Bid(current_price=bid_price, times_bid=if_bid_exist.times_bid+1, item=item)
                 new_bid.save()
-                return render(request, "auctions/listings.html", {
-                        "item": item,
-                        "bid": new_bid
-                })
-            else:
+                print(f"First if = {new_bid}")
                 return render(request, "auctions/listings.html", {
                     "item": item,
+                    "bid": new_bid
+                })
+            else:
+                bid = Bid.objects.get(pk=item_id)
+                return render(request, "auctions/listings.html", {
+                    "item": item,
+                    "bid": bid,
                     "message": "You bid is lower than current!!"
                 })
         else:
             if bid_price:
                 if bid_price > current_price:
                     bid_number = bid_number + 1
-                    new_bid = Bid(current_price=bid_price, times_bid=bid_number, item=item_id)    
+                    new_bid = Bid(current_price=bid_price, times_bid=bid_number, item=item)    
                     new_bid.save()
+                    print(f"Second if = {new_bid}")
                     return render(request, "auctions/listings.html", {
                         "item": item,
                         "bid": new_bid
                     })
                 else: 
+                    bid = Bid.objects.get(pk=item_id)
                     return render(request, "auctions/listings.html", {
-                    "item": item,
-                    "message": "You bid is lower than current!!"
-                })
+                        "item": item,
+                        "bid": bid,
+                        "message": "You bid is lower than current!!"
+                    })
             else: 
-                new_bid = Bid(current_price=current_price, times_bid=bid_number, item=item_id)
+                new_bid = Bid(current_price=current_price, times_bid=bid_number, item=item)
                 new_bid.save()
+                print(f"Third if = {new_bid}")
                 return render(request, "auctions/listings.html", {
                     "item": item,
                     "bid": new_bid
                 })
+    else:
+        return render(request, "auctions/listings.html", {
+                    "item": item,
+                    "bid": new_bid
+                })
+
 
 def categories(request):
     pass
