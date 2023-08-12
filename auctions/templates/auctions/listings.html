@@ -16,7 +16,7 @@
     <form action="{% url 'bid' item.id %}" method="post">
         {% csrf_token %}
         <label for="bid">{{ bid.times_bid }} bid(s) so far. Your bid is the current bid.</label><br>
-        <input type="number" id="bid" placeholder="Bid" name="bid" min="{{ item.price }}" max=""><br>
+        <input type="number" id="bid" placeholder="Bid" name="bid" step=".01"><br>
         {% if message %}
             {{ message }} <br>
         {% endif %}

@@ -73,74 +73,47 @@ def create(request):
         image = request.POST["image"]
         category = request.POST["category"]
         listed_by = request.user
-        item = Auction(name=title, description=description, category=category, image=image, starting_bid=starting_bid, listed_by=listed_by)
-        item.save()
-        # zbog linije ispod else je kao nepotreban, nisam siguran
-        bid = Bid(current_price=item.starting_bid, times_bid=0, item=item)
+        bid = Bid(current_price=starting_bid, times_bid=0)
         bid.save()
-        print(bid, listed_by)
+        item = Auction(name=title, description=description, category=category, price=bid, image=image, listed_by=listed_by)
+        item.save()
         return render(request, "auctions/index.html", {
-            "item": Auction.objects.all()
+            "item": Auction.objects.all(),
+            "bid": bid
         })
     else:
         return render(request, "auctions/create.html")
     
 def auction_item(request, item_id):
     item = Auction.objects.get(pk=item_id)
+    bid = Bid.objects.get(pk=item_id)
     return render(request, "auctions/listings.html", {
-        "item": item
+        "item": item,
+        "bid": bid
     })
 
 def bid(request, item_id):
     item = Auction.objects.get(pk=item_id)
-    current_price = item.starting_bid
-    bid_number = 0
-    # proveriti celu else granu, nesto mi ne valja logika, prekasno je da provalim
     # ostalo za uraditi : popraviti bid, watchlist, zatvoriti bid, pobednicka strana, comments, categories.
     if request.method == "POST":
-        bid_price = int(request.POST["bid"])
+        bid_price = round(float(request.POST["bid"]), 2)
         if Bid.objects.get(pk=item_id):
             if_bid_exist = Bid.objects.get(pk=item_id)
             if bid_price > if_bid_exist.current_price:
-                new_bid = Bid(current_price=bid_price, times_bid=if_bid_exist.times_bid+1, item=item)
+                new_bid = Bid(current_price=bid_price, times_bid=if_bid_exist.times_bid+1)
                 new_bid.save()
-                print(f"First if = {new_bid}")
+                print(f"price user entered = {bid_price}, price in database = {if_bid_exist.current_price}, times_bid = {if_bid_exist.times_bid+1}")
                 return render(request, "auctions/listings.html", {
                     "item": item,
                     "bid": new_bid
                 })
             else:
                 bid = Bid.objects.get(pk=item_id)
+                print(f"item id is {item_id} || First else = {bid}")
                 return render(request, "auctions/listings.html", {
                     "item": item,
                     "bid": bid,
                     "message": "You bid is lower than current!!"
-                })
-        else:
-            if bid_price:
-                if bid_price > current_price:
-                    bid_number = bid_number + 1
-                    new_bid = Bid(current_price=bid_price, times_bid=bid_number, item=item)    
-                    new_bid.save()
-                    print(f"Second if = {new_bid}")
-                    return render(request, "auctions/listings.html", {
-                        "item": item,
-                        "bid": new_bid
-                    })
-                else: 
-                    bid = Bid.objects.get(pk=item_id)
-                    return render(request, "auctions/listings.html", {
-                        "item": item,
-                        "bid": bid,
-                        "message": "You bid is lower than current!!"
-                    })
-            else: 
-                new_bid = Bid(current_price=current_price, times_bid=bid_number, item=item)
-                new_bid.save()
-                print(f"Third if = {new_bid}")
-                return render(request, "auctions/listings.html", {
-                    "item": item,
-                    "bid": new_bid
                 })
     else:
         return render(request, "auctions/listings.html", {
