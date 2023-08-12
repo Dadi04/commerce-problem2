@@ -13,7 +13,7 @@ class Bid(models.Model):
     times_bid = models.PositiveSmallIntegerField(default=0)
 
     def __str__(self):
-        return f"auction_id = {self.id}. times_bid = {self.times_bid}, current price is {self.current_price}"
+        return f"{self.current_price}"
 
 class Auction(models.Model):
     name = models.CharField(max_length=254)

@@ -79,47 +79,41 @@ def create(request):
         item.save()
         return render(request, "auctions/index.html", {
             "item": Auction.objects.all(),
-            "bid": bid
         })
     else:
         return render(request, "auctions/create.html")
     
 def auction_item(request, item_id):
     item = Auction.objects.get(pk=item_id)
-    bid = Bid.objects.get(pk=item_id)
+    print(item.price)
+    print(item)
     return render(request, "auctions/listings.html", {
         "item": item,
-        "bid": bid
+        "bid": item.price
     })
 
 def bid(request, item_id):
     item = Auction.objects.get(pk=item_id)
     # ostalo za uraditi : popraviti bid, watchlist, zatvoriti bid, pobednicka strana, comments, categories.
-    if request.method == "POST":
-        bid_price = round(float(request.POST["bid"]), 2)
-        if Bid.objects.get(pk=item_id):
-            if_bid_exist = Bid.objects.get(pk=item_id)
-            if bid_price > if_bid_exist.current_price:
-                new_bid = Bid(current_price=bid_price, times_bid=if_bid_exist.times_bid+1)
-                new_bid.save()
-                print(f"price user entered = {bid_price}, price in database = {if_bid_exist.current_price}, times_bid = {if_bid_exist.times_bid+1}")
-                return render(request, "auctions/listings.html", {
-                    "item": item,
-                    "bid": new_bid
-                })
-            else:
-                bid = Bid.objects.get(pk=item_id)
-                print(f"item id is {item_id} || First else = {bid}")
-                return render(request, "auctions/listings.html", {
-                    "item": item,
-                    "bid": bid,
-                    "message": "You bid is lower than current!!"
-                })
-    else:
+    bid_price = round(float(request.POST["bid"]), 2)
+
+    if bid_price > item.price.current_price:
+        new_bid = Bid(current_price=bid_price, times_bid=item.price.times_bid+1)
+        new_bid.save()
+        print(f"price user entered = {bid_price}, price in database = {item.price.current_price}, times_bid = {item.price.times_bid+1}")
         return render(request, "auctions/listings.html", {
-                    "item": item,
-                    "bid": new_bid
-                })
+            "item": item,
+            "bid": new_bid
+        })
+    else:
+        # popraviti kako doci do bid preko pk
+        bid = item.price
+        print(f"item id is {item_id} || First else = {bid}")
+        return render(request, "auctions/listings.html", {
+            "item": item,
+            "bid": bid,
+            "message": "You bid is lower than current!!"
+        })
 
 
 def categories(request):

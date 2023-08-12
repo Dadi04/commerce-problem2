@@ -7,16 +7,16 @@
     <img src="{{ item.image }}" alt="{{ item.name }}" width="600px">
     <p>{{ item.description }}</p>
     <h2>
-        {% if bid.current_price %}
-            ${{ bid.current_price }}
+        {% if item.price %}
+            ${{ item.price }}
         {% else %}
-            ${{ item.starting_bid }}
+            ${{ bid.current_price }}
         {% endif %}
     </h2>
     <form action="{% url 'bid' item.id %}" method="post">
         {% csrf_token %}
         <label for="bid">{{ bid.times_bid }} bid(s) so far. Your bid is the current bid.</label><br>
-        <input type="number" id="bid" placeholder="Bid" name="bid" step=".01"><br>
+        <input type="number" id="bid" placeholder="Bid" name="bid" step=".01" min="0" max=""><br>
         {% if message %}
             {{ message }} <br>
         {% endif %}
