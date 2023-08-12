@@ -98,6 +98,7 @@ def bid(request, item_id):
     bid_price = round(float(request.POST["bid"]), 2)
 
     if bid_price > item.price.current_price:
+        # popraviti broj bidova, ne radi nzm sto
         new_bid = Bid(current_price=bid_price, times_bid=item.price.times_bid+1)
         new_bid.save()
         print(f"price user entered = {bid_price}, price in database = {item.price.current_price}, times_bid = {item.price.times_bid+1}")
@@ -106,7 +107,7 @@ def bid(request, item_id):
             "bid": new_bid
         })
     else:
-        # popraviti kako doci do bid preko pk
+        # popraviti - vraca se stara cena, sve ostalo radi
         bid = item.price
         print(f"item id is {item_id} || First else = {bid}")
         return render(request, "auctions/listings.html", {

@@ -7,7 +7,7 @@
     <img src="{{ item.image }}" alt="{{ item.name }}" width="600px">
     <p>{{ item.description }}</p>
     <h2>
-        {% if item.price %}
+        {% if item.price > bid.current_price %}
             ${{ item.price }}
         {% else %}
             ${{ bid.current_price }}
