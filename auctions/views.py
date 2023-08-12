@@ -75,6 +75,7 @@ def create(request):
         listed_by = request.user
         bid = Bid(current_price=starting_bid, times_bid=0)
         bid.save()
+
         item = Auction(name=title, description=description, category=category, price=bid, image=image, listed_by=listed_by)
         item.save()
         return render(request, "auctions/index.html", {
@@ -101,7 +102,6 @@ def bid(request, item_id):
         # popraviti broj bidova, ne radi nzm sto
         new_bid = Bid(current_price=bid_price, times_bid=item.price.times_bid+1)
         new_bid.save()
-        print(f"price user entered = {bid_price}, price in database = {item.price.current_price}, times_bid = {item.price.times_bid+1}")
         return render(request, "auctions/listings.html", {
             "item": item,
             "bid": new_bid
@@ -109,7 +109,6 @@ def bid(request, item_id):
     else:
         # popraviti - vraca se stara cena, sve ostalo radi
         bid = item.price
-        print(f"item id is {item_id} || First else = {bid}")
         return render(request, "auctions/listings.html", {
             "item": item,
             "bid": bid,
