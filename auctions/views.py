@@ -9,9 +9,8 @@ from .models import User, Comment, Auction, Bid, Watchlist
 
 def index(request):
     return render(request, "auctions/index.html", {
-        "item": Auction.objects.all()
+        "item": Auction.objects.filter(isActive=True)
     })
-
 
 def login_view(request):
     if request.method == "POST":
