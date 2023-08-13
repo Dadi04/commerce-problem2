@@ -44,4 +44,5 @@ class Comment(models.Model):
     comments = models.CharField(max_length=254)
     commented_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments_discussed_by')
     item = models.ForeignKey(Auction, on_delete=models.CASCADE)
+    time = models.DateTimeField(default=timezone.now())
 

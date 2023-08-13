@@ -88,7 +88,7 @@ def create(request):
     
 def auction_item(request, item_id):
     item = Auction.objects.get(pk=item_id)
-    print(item.price.latest_bidder)
+
     if request.user == item.listed_by:
         return render(request, "auctions/listings.html", {
             "item": item,
@@ -111,6 +111,7 @@ def bid(request, item_id):
         new_bid.save()
         item.price = new_bid
         item.save()
+
         if request.user == item.listed_by: 
             return render(request, "auctions/listings.html", {
                 "item": item,
@@ -141,6 +142,7 @@ def comment(request, item_id):
 
     new_comment = Comment(comments=comment, commented_by=user, item=item)
     new_comment.save()
+    
     if request.user == item.listed_by: 
         return render(request, "auctions/listings.html", {
             "item": item,
@@ -150,7 +152,7 @@ def comment(request, item_id):
     else: 
         return render(request, "auctions/listings.html", {
             "item": item,
-            "comments": Comment.objects.filter(item=item),
+            "comments": Comment.objects.filter(item=item)
         })
 
 def watchlist(request, item_id):
@@ -167,6 +169,7 @@ def watchlist(request, item_id):
         change_status.save()
         item.watchlisted = change_status
         item.save()
+
     if user == item.listed_by:
         return render(request, "auctions/listings.html", {
             "item": item,
@@ -181,6 +184,7 @@ def watchlist(request, item_id):
 
 def close_auction(request, item_id):
     item = Auction.objects.get(pk=item_id)
+
     if request.user == item.listed_by:
         item.isActive = False
         item.save()
