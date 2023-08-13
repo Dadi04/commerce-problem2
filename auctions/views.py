@@ -89,14 +89,21 @@ def create(request):
     
 def auction_item(request, item_id):
     item = Auction.objects.get(pk=item_id)
-    return render(request, "auctions/listings.html", {
-        "item": item,
-        "comments": Comment.objects.filter(item=item)
-    })
+    if request.user == item.listed_by:
+        return render(request, "auctions/listings.html", {
+            "item": item,
+            "comments": Comment.objects.filter(item=item),
+            "exist": True
+        })
+    else: 
+        return render(request, "auctions/listings.html", {
+            "item": item,
+            "comments": Comment.objects.filter(item=item)
+        })
 
 def bid(request, item_id):
     item = Auction.objects.get(pk=item_id)
-    # ostalo za uraditi : watchlist, zatvoriti bid, pobednicka strana, categories.
+    # ostalo za uraditi : zatvoriti bid, pobednicka strana, categories.
     bid_price = float(request.POST["bid"])
 
     if bid_price > item.price.current_price:
@@ -104,13 +111,21 @@ def bid(request, item_id):
         new_bid.save()
         item.price = new_bid
         item.save()
-
-        return render(request, "auctions/listings.html", {
-            "item": item,
-            "message": "Bid updated successfully!",
-            "update": True,
-            "comments": Comment.objects.filter(item=item)
-        })
+        if request.user == item.listed_by: 
+            return render(request, "auctions/listings.html", {
+                "item": item,
+                "message": "Bid updated successfully!",
+                "update": True,
+                "comments": Comment.objects.filter(item=item),
+                "exist": True
+            })
+        else:
+            return render(request, "auctions/listings.html", {
+                "item": item,
+                "message": "Bid updated successfully!",
+                "update": True,
+                "comments": Comment.objects.filter(item=item)
+            })
     else:
         return render(request, "auctions/listings.html", {
             "item": item,
@@ -126,11 +141,17 @@ def comment(request, item_id):
 
     new_comment = Comment(comments=comment, commented_by=user, item=item)
     new_comment.save()
-
-    return render(request, "auctions/listings.html", {
-        "item": item,
-        "comments": Comment.objects.filter(item=item)
-    })
+    if request.user == item.listed_by: 
+        return render(request, "auctions/listings.html", {
+            "item": item,
+            "comments": Comment.objects.filter(item=item),
+            "exist": True
+        })
+    else: 
+        return render(request, "auctions/listings.html", {
+            "item": item,
+            "comments": Comment.objects.filter(item=item),
+        })
 
 def watchlist(request, item_id):
     item = Auction.objects.get(pk=item_id)
@@ -151,6 +172,22 @@ def watchlist(request, item_id):
         "item": item,
         "comments": Comment.objects.filter(item=item)
     })
+
+def close_auction(request, item_id):
+    item = Auction.objects.get(pk=item_id)
+    if request.user == item.listed_by:
+        item.isActive = False
+        item.save()
+        return render(request, "auctions/listings.html", {
+            "item": item,
+            "comments": Comment.objects.filter(item=item),
+            "exist": True
+        })
+    else: 
+        return render(request, "auctions/listings.html", {
+            "item": item,
+            "comment": Comment.objects.filter(item=item)
+        })
 
 def categories(request):
     pass

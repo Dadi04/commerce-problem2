@@ -22,16 +22,30 @@
             <input type="submit" value="Watchlisted : {{ item.watchlisted.watchlist }}"><br>
         </form>
     {% endif %}
+    {% if user.is_authenticated %}
+        {% if not item.isActive %}
+            <p>Auction is finished, winner is: </p>
+        {% else %}
+            <p>Auction is not finished yet!</p>
+            {% if exist %}
+            <form action="{% url 'close_auction' item.id %}">
+                <input type="submit" value="Close Auction">
+            </form>
+        {% endif %}
+        {% endif %}
+    {% endif %}
     <img src="{{ item.image }}" alt="{{ item.name }}" width="600px">
     <p>{{ item.description }}</p>
     <h2>${{ item.price.current_price }}</h2>
     {% if user.is_authenticated %}
-        <form action="{% url 'bid' item.id %}" method="post">
-            {% csrf_token %}
-            <label for="bid">{{ item.price.times_bid }} bid(s) so far. Your bid is the current bid.</label><br>
-            <input type="number" id="bid" placeholder="Bid" name="bid" step=".01" min="0" max=""><br>
-            <input type="submit" value="Place Bid">
-        </form>
+        {% if item.isActive %}    
+            <form action="{% url 'bid' item.id %}" method="post">
+                {% csrf_token %}
+                <label for="bid">{{ item.price.times_bid }} bid(s) so far. Your bid is the current bid.</label><br>
+                <input type="number" id="bid" placeholder="Bid" name="bid" step=".01" min="0" max="" required><br>
+                <input type="submit" value="Place Bid">
+            </form>
+        {% endif %}
     {% endif %}
     <h3>Details</h3>
     <ul>
@@ -50,7 +64,7 @@
     {% if user.is_authenticated %}
         <form action="{% url 'comment' item.id %}" method="post">
             {% csrf_token %}
-            <textarea name="comment" cols="100" rows="5" placeholder="Write a comment.."></textarea><br>
+            <textarea name="comment" cols="100" rows="5" placeholder="Write a comment.." required></textarea><br>
             <input type="submit" value="Add a comment">
         </form>
     {% endif %}
