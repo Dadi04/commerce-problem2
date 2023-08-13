@@ -151,9 +151,9 @@ def watchlist(request, item_id):
         "item": item,
         "comments": Comment.objects.filter(item=item)
     })
-    
-    
 
 def categories(request):
     pass
 
+def watchlist_page(request):
+    pass
