@@ -11,6 +11,7 @@ class User(AbstractUser):
 class Bid(models.Model):
     current_price = models.DecimalField(decimal_places=2, max_digits=10)
     times_bid = models.PositiveSmallIntegerField(default=0)
+    latest_bidder = models.ForeignKey(User, to_field='username', on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.current_price}"

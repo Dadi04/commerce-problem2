@@ -24,7 +24,7 @@
     {% endif %}
     {% if user.is_authenticated %}
         {% if not item.isActive %}
-            <p>Auction is finished, winner is: </p>
+            <p>Auction is finished, winner is: {{ item.price.latest_bidder }}</p>
         {% else %}
             <p>Auction is not finished yet!</p>
             {% if exist %}

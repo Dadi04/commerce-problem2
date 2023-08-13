@@ -73,7 +73,7 @@ def create(request):
         image = request.POST["image"]
         category = request.POST["category"]
         listed_by = request.user
-        bid = Bid(current_price=starting_bid, times_bid=0)
+        bid = Bid(current_price=starting_bid, times_bid=0, latest_bidder=request.user)
         bid.save()
 
         watchlist = Watchlist(watchlist=False, watchlisted_by=listed_by)
@@ -89,6 +89,7 @@ def create(request):
     
 def auction_item(request, item_id):
     item = Auction.objects.get(pk=item_id)
+    print(item.price.latest_bidder)
     if request.user == item.listed_by:
         return render(request, "auctions/listings.html", {
             "item": item,
@@ -107,7 +108,7 @@ def bid(request, item_id):
     bid_price = float(request.POST["bid"])
 
     if bid_price > item.price.current_price:
-        new_bid = Bid(current_price=bid_price, times_bid=item.price.times_bid+1)
+        new_bid = Bid(current_price=bid_price, times_bid=item.price.times_bid+1, latest_bidder=request.user)
         new_bid.save()
         item.price = new_bid
         item.save()
@@ -167,11 +168,17 @@ def watchlist(request, item_id):
         change_status.save()
         item.watchlisted = change_status
         item.save()
-
-    return render(request, "auctions/listings.html", {
-        "item": item,
-        "comments": Comment.objects.filter(item=item)
-    })
+    if user == item.listed_by:
+        return render(request, "auctions/listings.html", {
+            "item": item,
+            "comments": Comment.objects.filter(item=item),
+            "exist": True
+        })
+    else: 
+        return render(request, "auctions/listings.html", {
+            "item": item,
+            "comments": Comment.objects.filter(item=item)
+        })
 
 def close_auction(request, item_id):
     item = Auction.objects.get(pk=item_id)
