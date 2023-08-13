@@ -32,7 +32,7 @@ class Auction(models.Model):
         return f"{self.id}. {self.category}:{self.name} ({self.description}), {self.price}$ at {self.formatted_datetime()} by {self.listed_by}"
 
 class Comment(models.Model):
-    comments = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments_discussion')
+    comments = models.CharField(max_length=254)
     commented_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments_discussed_by')
     item = models.ForeignKey(Auction, on_delete=models.CASCADE)
 

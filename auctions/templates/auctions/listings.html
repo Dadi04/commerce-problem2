@@ -17,7 +17,11 @@
     </div>
 
     <h1>Listing: {{ item.name }}</h1>
-    <input type="button" value="Watchlist"><br>
+    {% if user.is_authenticated %}
+        <form action="{% url 'watchlist' item.id %}">
+            <input type="submit" value="Watchlist"><br>
+        </form>
+    {% endif %}
     <img src="{{ item.image }}" alt="{{ item.name }}" width="600px">
     <p>{{ item.description }}</p>
     <h2>${{ item.price.current_price }}</h2>
@@ -46,9 +50,14 @@
     {% if user.is_authenticated %}
         <form action="{% url 'comment' item.id %}" method="post">
             {% csrf_token %}
-            <textarea name="comment" cols="30" rows="10" placeholder="Write a comment.."></textarea><br>
+            <textarea name="comment" cols="100" rows="5" placeholder="Write a comment.."></textarea><br>
             <input type="submit" value="Add a comment">
         </form>
     {% endif %}
     <hr>
+    {% for comment in comments %}
+        <div>
+            {{ comment.commented_by }} : {{ comment.comments }}
+        </div>
+    {% endfor %}
 {% endblock %}

@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Comment, Auction, Bid
+from .models import User, Comment, Auction, Bid, Watchlist
 
 
 def index(request):
@@ -88,12 +88,12 @@ def auction_item(request, item_id):
     item = Auction.objects.get(pk=item_id)
     return render(request, "auctions/listings.html", {
         "item": item,
-        "bid": item.price
+        "comments": Comment.objects.filter(item=item)
     })
 
 def bid(request, item_id):
     item = Auction.objects.get(pk=item_id)
-    # ostalo za uraditi : watchlist, zatvoriti bid, pobednicka strana, comments, categories.
+    # ostalo za uraditi : watchlist, zatvoriti bid, pobednicka strana, categories.
     bid_price = float(request.POST["bid"])
 
     if bid_price > item.price.current_price:
@@ -105,26 +105,38 @@ def bid(request, item_id):
         return render(request, "auctions/listings.html", {
             "item": item,
             "message": "Bid updated successfully!",
-            "update": True
+            "update": True,
+            "comments": Comment.objects.filter(item=item)
         })
     else:
         return render(request, "auctions/listings.html", {
             "item": item,
             "message": "Bid update failed!",
-            "update": False
+            "update": False,
+            "comments": Comment.objects.filter(item=item)
         })
 
 def comment(request, item_id):
     item = Auction.objects.get(pk=item_id)
-    if request.method == "POST":
-        print("Success")
-        return render(request, "auctions/listings.html", {
-            "item": item
-        })
+    user = request.user
+    comment = request.POST["comment"]
 
+    new_comment = Comment(comments=comment, commented_by=user, item=item)
+    new_comment.save()
+
+    return render(request, "auctions/listings.html", {
+        "item": item,
+        "comments": Comment.objects.filter(item=item)
+    })
+
+def watchlist(request, item_id):
+    item = Auction.objects.get(pk=item_id)
+    
+    return render(request, "auctions/listings.html", {
+        "item": item,
+        "comments": Comment.objects.filter(item=item)
+    })
 
 def categories(request):
     pass
 
-def watchlist(request):
-    pass
