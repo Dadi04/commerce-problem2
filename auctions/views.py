@@ -76,7 +76,10 @@ def create(request):
         bid = Bid(current_price=starting_bid, times_bid=0)
         bid.save()
 
-        item = Auction(name=title, description=description, category=category, price=bid, image=image, listed_by=listed_by)
+        watchlist = Watchlist(watchlist=False, watchlisted_by=listed_by)
+        watchlist.save()
+
+        item = Auction(name=title, description=description, category=category, price=bid, image=image, listed_by=listed_by, isActive=True, watchlisted=watchlist)
         item.save()
         return render(request, "auctions/index.html", {
             "item": Auction.objects.all(),
@@ -131,11 +134,25 @@ def comment(request, item_id):
 
 def watchlist(request, item_id):
     item = Auction.objects.get(pk=item_id)
-    
+    user = request.user
+    watchlist = item.watchlisted.watchlist
+    if watchlist == False:
+        change_status = Watchlist(watchlist=True, watchlisted_by=user)
+        change_status.save()
+        item.watchlisted = change_status
+        item.save()
+    elif watchlist == True:
+        change_status = Watchlist(watchlist=False, watchlisted_by=user)
+        change_status.save()
+        item.watchlisted = change_status
+        item.save()
+
     return render(request, "auctions/listings.html", {
         "item": item,
         "comments": Comment.objects.filter(item=item)
     })
+    
+    
 
 def categories(request):
     pass

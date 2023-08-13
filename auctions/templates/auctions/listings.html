@@ -19,7 +19,7 @@
     <h1>Listing: {{ item.name }}</h1>
     {% if user.is_authenticated %}
         <form action="{% url 'watchlist' item.id %}">
-            <input type="submit" value="Watchlist"><br>
+            <input type="submit" value="Watchlisted : {{ item.watchlisted.watchlist }}"><br>
         </form>
     {% endif %}
     <img src="{{ item.image }}" alt="{{ item.name }}" width="600px">

@@ -14,6 +14,13 @@ class Bid(models.Model):
 
     def __str__(self):
         return f"{self.current_price}"
+    
+class Watchlist(models.Model):
+    watchlist = models.BooleanField()
+    watchlisted_by = models.ForeignKey(User, on_delete=models.CASCADE)    
+
+    def __str__(self):
+        return f"{self.watchlist}"    
 
 class Auction(models.Model):
     name = models.CharField(max_length=254)
@@ -24,6 +31,7 @@ class Auction(models.Model):
     datetime = models.DateTimeField(default=timezone.now())
     listed_by = models.ForeignKey(User, on_delete=models.CASCADE)
     isActive = models.BooleanField(default=True)
+    watchlisted = models.ForeignKey(Watchlist, on_delete=models.CASCADE, default=False)
     
     def formatted_datetime(self):
         return self.datetime.strftime("%b. %d, %Y, %I:%M %p")
@@ -36,7 +44,3 @@ class Comment(models.Model):
     commented_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments_discussed_by')
     item = models.ForeignKey(Auction, on_delete=models.CASCADE)
 
-class Watchlist(models.Model):
-    watchlist = models.BooleanField(default=False)
-    watchlisted_by = models.ForeignKey(User, on_delete=models.CASCADE)
-    item = models.ForeignKey(Auction, on_delete=models.CASCADE)    
