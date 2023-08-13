@@ -2,26 +2,33 @@
 
 {% block body %}
 
+    <div>
+        {% if message %}
+            {% if updated %}
+                <div>
+                    {{ message }}
+                </div>
+            {% else %}
+                <div>
+                    {{ message }}
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+
     <h1>Listing: {{ item.name }}</h1>
     <input type="button" value="Watchlist"><br>
     <img src="{{ item.image }}" alt="{{ item.name }}" width="600px">
     <p>{{ item.description }}</p>
-    <h2>
-        {% if item.price > bid.current_price %}
-            ${{ item.price }}
-        {% else %}
-            ${{ bid.current_price }}
-        {% endif %}
-    </h2>
-    <form action="{% url 'bid' item.id %}" method="post">
-        {% csrf_token %}
-        <label for="bid">{{ bid.times_bid }} bid(s) so far. Your bid is the current bid.</label><br>
-        <input type="number" id="bid" placeholder="Bid" name="bid" step=".01" min="0" max=""><br>
-        {% if message %}
-            {{ message }} <br>
-        {% endif %}
-        <input type="submit" value="Place Bid">
-    </form>
+    <h2>${{ item.price.current_price }}</h2>
+    {% if user.is_authenticated %}
+        <form action="{% url 'bid' item.id %}" method="post">
+            {% csrf_token %}
+            <label for="bid">{{ item.price.times_bid }} bid(s) so far. Your bid is the current bid.</label><br>
+            <input type="number" id="bid" placeholder="Bid" name="bid" step=".01" min="0" max=""><br>
+            <input type="submit" value="Place Bid">
+        </form>
+    {% endif %}
     <h3>Details</h3>
     <ul>
         <li>Listed by: {{ item.listed_by }}</li>
@@ -36,6 +43,12 @@
         </li>
     </ul>
     <h3>Comments</h3>
-    <textarea name="comment" cols="30" rows="10" placeholder="Write a comment.."></textarea><br>
-    <input type="submit" value="Add a comment">
+    {% if user.is_authenticated %}
+        <form action="{% url 'comment' item.id %}" method="post">
+            {% csrf_token %}
+            <textarea name="comment" cols="30" rows="10" placeholder="Write a comment.."></textarea><br>
+            <input type="submit" value="Add a comment">
+        </form>
+    {% endif %}
+    <hr>
 {% endblock %}

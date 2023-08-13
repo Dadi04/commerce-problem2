@@ -86,8 +86,6 @@ def create(request):
     
 def auction_item(request, item_id):
     item = Auction.objects.get(pk=item_id)
-    print(item.price)
-    print(item)
     return render(request, "auctions/listings.html", {
         "item": item,
         "bid": item.price
@@ -95,24 +93,33 @@ def auction_item(request, item_id):
 
 def bid(request, item_id):
     item = Auction.objects.get(pk=item_id)
-    # ostalo za uraditi : popraviti bid, watchlist, zatvoriti bid, pobednicka strana, comments, categories.
-    bid_price = round(float(request.POST["bid"]), 2)
+    # ostalo za uraditi : watchlist, zatvoriti bid, pobednicka strana, comments, categories.
+    bid_price = float(request.POST["bid"])
 
     if bid_price > item.price.current_price:
-        # popraviti broj bidova, ne radi nzm sto
         new_bid = Bid(current_price=bid_price, times_bid=item.price.times_bid+1)
         new_bid.save()
+        item.price = new_bid
+        item.save()
+
         return render(request, "auctions/listings.html", {
             "item": item,
-            "bid": new_bid
+            "message": "Bid updated successfully!",
+            "update": True
         })
     else:
-        # popraviti - vraca se stara cena, sve ostalo radi
-        bid = item.price
         return render(request, "auctions/listings.html", {
             "item": item,
-            "bid": bid,
-            "message": "You bid is lower than current!!"
+            "message": "Bid update failed!",
+            "update": False
+        })
+
+def comment(request, item_id):
+    item = Auction.objects.get(pk=item_id)
+    if request.method == "POST":
+        print("Success")
+        return render(request, "auctions/listings.html", {
+            "item": item
         })
 
 
