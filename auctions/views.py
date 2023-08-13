@@ -196,7 +196,11 @@ def close_auction(request, item_id):
         })
 
 def categories(request):
+    # TO DO
     pass
 
 def watchlist_page(request):
+    # TO DO
     pass
+
+# TO DO CSS malo to mora lepse da izgleda (SASS da se ubaci malo)
