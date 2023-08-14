@@ -105,7 +105,6 @@ def auction_item(request, item_id):
 
 def bid(request, item_id):
     item = Auction.objects.get(pk=item_id)
-    # ostalo za uraditi : zatvoriti bid, pobednicka strana, categories.
     bid_price = float(request.POST["bid"])
 
     if bid_price > item.price.current_price:
@@ -211,16 +210,16 @@ def categories(request):
         "categories_with_counts": categories_with_counts
     })
 
-
 def category_listing(request, category_name):
     return render(request, "auctions/category_listing.html", {
         "item": Auction.objects.filter(category=category_name, isActive=True).order_by('-datetime')
     })
 
 def watchlist_page(request):
-    # TO DO
+    watchlist = Watchlist.objects.filter(watchlist=True, watchlisted_by=request.user).values_list('auction', flat=True)
+    item = Auction.objects.filter(isActive=True, pk__in=watchlist)
     return render(request, "auctions/watchlist.html", {
-        "item": "item"
+        "item": item
     })
 
 # TO DO CSS malo to mora lepse da izgleda (SASS da se ubaci malo)
