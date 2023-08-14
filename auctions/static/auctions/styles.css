@@ -1,5 +1,5 @@
 #side, #main {
-  display: inline-block;
+  display: inline;
   padding: 20px;
 }
 
@@ -41,12 +41,14 @@ input[type=url] {
 }
 
 #main {
+  float: left;
   width: 800px;
   height: auto;
 }
 
 #side {
   width: 900px;
+  float: right;
 }
 #side #close_auction_bids {
   height: 250px;
@@ -65,7 +67,7 @@ input[type=url] {
 }
 #side #comments {
   padding: 20px;
-  height: 420px;
+  height: 400px;
   overflow: auto;
 }
 
