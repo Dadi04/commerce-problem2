@@ -1,0 +1,11 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<ul>
+    {% for category in categories_with_counts %}
+        <li><a href="{% url 'category_listing' category.category %}">{{ category.category }} ({{ category.item_count }} auction(s) currently active)</a></li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

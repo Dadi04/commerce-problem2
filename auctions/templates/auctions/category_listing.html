@@ -1,0 +1,19 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+{% for items in item %}
+    <div class="listing">
+        <div class="img">
+            <a href="{% url 'auction_item' items.id %}"><img src="{{ items.image }}" alt="items.name" height="100%"></a>
+        </div>
+        <div class="content">
+            <h2>{{ items.name }}</h2>
+            <h5><b>Price:</b> ${{ items.price.current_price }}</h5>
+            <p>{{ items.description }}</p>
+            <p class="date">Created {{ items.datetime }}</p>
+        </div>
+    </div>
+{% endfor %}
+
+{% endblock %}

@@ -1,15 +1,16 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.db.models import Count, Q
 
 from .models import User, Comment, Auction, Bid, Watchlist
 
 
 def index(request):
     return render(request, "auctions/index.html", {
-        "item": Auction.objects.filter(isActive=True)
+        "item": Auction.objects.filter(isActive=True).order_by('-datetime')
     })
 
 def login_view(request):
@@ -72,6 +73,7 @@ def create(request):
         image = request.POST["image"]
         category = request.POST["category"]
         listed_by = request.user
+        # create 0th bid
         bid = Bid(current_price=starting_bid, times_bid=0, latest_bidder=request.user)
         bid.save()
 
@@ -81,7 +83,7 @@ def create(request):
         item = Auction(name=title, description=description, category=category, price=bid, image=image, listed_by=listed_by, isActive=True, watchlisted=watchlist)
         item.save()
         return render(request, "auctions/index.html", {
-            "item": Auction.objects.all(),
+            "item": Auction.objects.filter(isActive=True).order_by('-datetime')
         })
     else:
         return render(request, "auctions/create.html")
@@ -200,11 +202,25 @@ def close_auction(request, item_id):
         })
 
 def categories(request):
-    # TO DO
-    pass
+    # get all unique categories
+    all_categories = Auction.objects.values('category').distinct()
+    # count every active auction to their category
+    categories_with_counts = all_categories.annotate(item_count=Count('category', filter=Q(isActive=True)))
+    
+    return render(request, "auctions/categories.html", {
+        "categories_with_counts": categories_with_counts
+    })
+
+
+def category_listing(request, category_name):
+    return render(request, "auctions/category_listing.html", {
+        "item": Auction.objects.filter(category=category_name, isActive=True).order_by('-datetime')
+    })
 
 def watchlist_page(request):
     # TO DO
-    pass
+    return render(request, "auctions/watchlist.html", {
+        "item": "item"
+    })
 
 # TO DO CSS malo to mora lepse da izgleda (SASS da se ubaci malo)
