@@ -129,12 +129,21 @@ def bid(request, item_id):
                 "comments": Comment.objects.filter(item=item)
             })
     else:
-        return render(request, "auctions/listings.html", {
-            "item": item,
-            "message": "Bid update failed!",
-            "update": False,
-            "comments": Comment.objects.filter(item=item)
-        })
+        if request.user == item.listed_by: 
+            return render(request, "auctions/listings.html", {
+                "item": item,
+                "message": "Bid update failed!",
+                "update": False,
+                "comments": Comment.objects.filter(item=item),
+                "exist": True
+            })
+        else:
+            return render(request, "auctions/listings.html", {
+                "item": item,
+                "message": "Bid update failed!",
+                "update": True,
+                "comments": Comment.objects.filter(item=item)
+            })
 
 def comment(request, item_id):
     item = Auction.objects.get(pk=item_id)

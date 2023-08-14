@@ -1,34 +1,72 @@
+#side, #main {
+  display: inline-block;
+  padding: 20px;
+}
+
+#side #comments, #side #close_auction_bids, #main {
+  border: 1px solid lightgray;
+  border-radius: 20px;
+}
+
 body {
-    padding: 10px;
+  padding: 10px;
 }
 
 input, textarea {
-    margin: 5px;
+  margin: 5px;
 }
 
-input[type="url"] {
-    width: 500px;
+input[type=url] {
+  width: 500px;
 }
 
 .listing {
-    border: 1px solid lightgray;
-    margin: 2px 0 10px 0;
-    height: 302px;
+  border: 1px solid lightgray;
+  margin: 2px 0 10px 0;
+  height: 302px;
+}
+.listing .img {
+  text-align: center;
+  display: inline-block;
+  height: 300px;
+  width: 600px;
+}
+.listing .content {
+  display: inline-block;
+  height: 300px;
+}
+.listing .content .date {
+  margin-top: 5px;
+  color: gray;
 }
 
-.img {
-    text-align: center;
-    display: inline-block;
-    height: 300px;
-    width: 600px;
+#main {
+  width: 800px;
+  height: auto;
 }
 
-.content {
-    display: inline-block;
-    height: 300px;
+#side {
+  width: 900px;
+}
+#side #close_auction_bids {
+  height: 250px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+#side #close_auction_bids p {
+  display: inline-block;
+}
+#side #close_auction_bids #first_form {
+  display: inline-block;
+}
+#side #close_auction_bids #close_auction_button {
+  display: inline-block;
+  text-align: right;
+}
+#side #comments {
+  padding: 20px;
+  height: 420px;
+  overflow: auto;
 }
 
-.content .date {
-    margin-top: 5px;
-    color: gray;
-}
+/*# sourceMappingURL=styles.css.map */
